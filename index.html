@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Project Timeline Comparison</title>
   <style>
     :root {
@@ -133,60 +133,61 @@
     <button onclick="exportTo('ppt')">Export to PowerPoint</button>
     <button onclick="exportTo('excel')">Export to Excel</button>
   </div>
-  <div class="container" id="timelineContainer">
-    <!-- TIMELINES WILL BE INJECTED BELOW -->
-  </div>
+  <div class="container" id="timelineContainer"></div>
 
   <script>
-const timelines = {
-  "Old Timeline": [
-    ["01.01.2025", "Phase 1 initiated", "Project officially kicked off with team alignment."],
-    ["19.05.2025", "8091 physical address provided", "Address assigned and confirmed for 8091."],
-    ["20.05.2025", "GoLive Phase 1", "Initial system rollout to production."],
-    ["01.07.2025", "Start of moving goods Phase 1", "Logistics operations initiated."],
-    ["29.08.2025", "End of moving goods Phase 1", "First wave of goods successfully moved."],
-    ["15.11.2025", "GoLive Phase 2", "Expansion phase system go-live."],
-    ["12/2025", "End of year inventory", "Annual inventory count and validation."],
-    ["01/2026", "Start of moving goods Phase 2", "Second wave of goods movement begins."]
-  ],
-  "New Timeline": [
-    ["01.01.2025", "Phase 1 initiated", "Same as Old Timeline."],
-    ["09.06.2025", "8091 physical address provided", "Delayed by 3 weeks due to external factors."],
-    ["11.06.2025", "GoLive Phase 1", "New go-live date for first rollout."],
-    ["01.07.2025", "Start of moving goods Phase 1", "Unchanged."],
-    ["29.08.2025", "End of moving goods Phase 1", "Unchanged."],
-    ["15.11.2025", "GoLive Phase 2", "Scheduled system expansion."],
-    ["12/2025", "End of year inventory", "Planned inventory count."],
-    ["01/2026", "Start of moving goods Phase 2", "Beginning of second logistics wave."]
-  ]
-};
+    const timelines = {
+      "Old Timeline": [
+        ["01.01.2025", "Phase 1 initiated", "Project officially kicked off with team alignment."],
+        ["19.05.2025", "8091 physical address provided", "Address assigned and confirmed for 8091."],
+        ["20.05.2025", "GoLive Phase 1", "Initial system rollout to production."],
+        ["01.07.2025", "Start of moving goods Phase 1", "Logistics operations initiated."],
+        ["29.08.2025", "End of moving goods Phase 1", "First wave of goods successfully moved."],
+        ["15.11.2025", "GoLive Phase 2", "Expansion phase system go-live."],
+        ["12/2025", "End of year inventory", "Annual inventory count and validation."],
+        ["01/2026", "Start of moving goods Phase 2", "Second wave of goods movement begins."]
+      ],
+      "New Timeline": [
+        ["01.01.2025", "Phase 1 initiated", "Same as Old Timeline."],
+        ["09.06.2025", "8091 physical address provided", "Delayed by 3 weeks due to external factors."],
+        ["11.06.2025", "GoLive Phase 1", "New go-live date for first rollout."],
+        ["01.07.2025", "Start of moving goods Phase 1", "Unchanged."],
+        ["29.08.2025", "End of moving goods Phase 1", "Unchanged."],
+        ["15.11.2025", "GoLive Phase 2", "Scheduled system expansion."],
+        ["12/2025", "End of year inventory", "Planned inventory count."],
+        ["01/2026", "Start of moving goods Phase 2", "Beginning of second logistics wave."]
+      ]
+    };
 
     const container = document.getElementById('timelineContainer');
 
     Object.entries(timelines).forEach(([title, events]) => {
       const timeline = document.createElement('div');
       timeline.className = 'timeline';
+
       const heading = document.createElement('h2');
       heading.textContent = title.includes('Old') ? '📍 ' + title : '🚀 ' + title;
       timeline.appendChild(heading);
 
-      events.forEach(([date, label, changed], index) => {
-        const event = document.createElement('div');
-        event.className = 'event';
-        if (changed) event.classList.add('changed');
+      events.forEach(([dateVal, label, description], index) => {
+        const eventDiv = document.createElement('div');
+        eventDiv.className = 'event';
+
+        // Yellow highlight for changed milestones in New Timeline
+        if (
+          title.includes("New") &&
+          (label === "8091 physical address provided" || label === "GoLive Phase 1")
+        ) {
+          eventDiv.classList.add('changed');
+        }
 
         const dateDiv = document.createElement('div');
         dateDiv.className = 'date';
-        dateDiv.textContent = date;
+        dateDiv.textContent = dateVal;
 
-        const date = event[0];
-const label = event[1];
-const description = event[2] || "(Add description here)";
-
-const descDiv = document.createElement('div');
-descDiv.className = 'desc';
-descDiv.innerHTML = `<strong>${label}</strong><br><em>${description}</em>`;
-
+        const descDiv = document.createElement('div');
+        descDiv.className = 'desc';
+        descDiv.innerHTML = `<strong>${label}</strong><br><em>${description || "(Add description here)"}</em>`;
 
         const toggleBtn = document.createElement('button');
         toggleBtn.className = 'note-toggle';
@@ -205,12 +206,12 @@ descDiv.innerHTML = `<strong>${label}</strong><br><em>${description}</em>`;
         };
 
         noteArea.appendChild(textarea);
-        event.appendChild(dateDiv);
-        event.appendChild(descDiv);
-        event.appendChild(toggleBtn);
-        event.appendChild(noteArea);
+        eventDiv.appendChild(dateDiv);
+        eventDiv.appendChild(descDiv);
+        eventDiv.appendChild(toggleBtn);
+        eventDiv.appendChild(noteArea);
 
-        timeline.appendChild(event);
+        timeline.appendChild(eventDiv);
       });
 
       container.appendChild(timeline);
@@ -219,9 +220,7 @@ descDiv.innerHTML = `<strong>${label}</strong><br><em>${description}</em>`;
     function exportTo(format) {
       let csv = 'Timeline,Date,Milestone,Note\n';
       Object.entries(timelines).forEach(([title, events]) => {
-        events.forEach((event, index) => {
-          const date = event[0];
-          const label = event[1];
+        events.forEach(([date, label], index) => {
           const key = `${title}-${index}`;
           const note = localStorage.getItem(key) || '';
           csv += `${title},${date},"${label}","${note.replace(/\n/g, ' ')}"\n`;
