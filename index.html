@@ -29,11 +29,12 @@
     }
     h1 {
       text-align: center;
-      margin-bottom: 2rem;
+      margin-bottom: 1rem;
     }
     .toggle {
       display: flex;
       justify-content: center;
+      gap: 1rem;
       margin-bottom: 2rem;
     }
     .toggle button {
@@ -129,6 +130,8 @@
   <h1>📊 Project Timeline Comparison</h1>
   <div class="toggle">
     <button onclick="document.body.classList.toggle('dark')">Toggle Dark Mode</button>
+    <button onclick="exportTo('ppt')">Export to PowerPoint</button>
+    <button onclick="exportTo('excel')">Export to Excel</button>
   </div>
   <div class="container" id="timelineContainer">
     <!-- TIMELINES WILL BE INJECTED BELOW -->
@@ -207,6 +210,25 @@
 
       container.appendChild(timeline);
     });
+
+    function exportTo(format) {
+      let csv = 'Timeline,Date,Milestone,Note\n';
+      Object.entries(timelines).forEach(([title, events]) => {
+        events.forEach((event, index) => {
+          const date = event[0];
+          const label = event[1];
+          const key = `${title}-${index}`;
+          const note = localStorage.getItem(key) || '';
+          csv += `${title},${date},"${label}","${note.replace(/\n/g, ' ')}"\n`;
+        });
+      });
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.setAttribute('href', url);
+      link.setAttribute('download', format === 'ppt' ? 'timeline_for_powerpoint.csv' : 'timeline_for_excel.csv');
+      link.click();
+    }
   </script>
 </body>
 </html>
