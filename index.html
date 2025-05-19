@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Project Timeline Comparison</title>
+  <style>
+    :root {
+      --bg: #f4f7fa;
+      --text: #333;
+      --card: #fff;
+      --accent: #4CAF50;
+      --subtle: #555;
+    }
+    body.dark {
+      --bg: #121212;
+      --text: #e0e0e0;
+      --card: #1e1e1e;
+      --accent: #81C784;
+      --subtle: #aaa;
+    }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      margin: 0;
+      padding: 2rem;
+      transition: background 0.3s, color 0.3s;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .toggle {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 2rem;
+    }
+    .toggle button {
+      background: var(--accent);
+      color: white;
+      border: none;
+      padding: 0.6rem 1rem;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .container {
+      display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap;
+      gap: 2rem;
+    }
+    .timeline {
+      width: 45%;
+      background: var(--card);
+      border-left: 4px solid var(--accent);
+      padding: 2rem 1rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+      border-radius: 8px;
+      transition: transform 0.3s ease;
+    }
+    .timeline:hover {
+      transform: translateY(-4px);
+    }
+    .timeline h2 {
+      color: var(--accent);
+      font-size: 1.4rem;
+      margin-bottom: 1.5rem;
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 0.5rem;
+    }
+    .event {
+      position: relative;
+      margin-bottom: 2rem;
+      padding-left: 2rem;
+    }
+    .event::before {
+      content: '';
+      position: absolute;
+      left: -0.5rem;
+      top: 0.2rem;
+      width: 14px;
+      height: 14px;
+      background: var(--accent);
+      border: 3px solid var(--card);
+      border-radius: 50%;
+      box-shadow: 0 0 0 4px var(--bg);
+    }
+    .date {
+      font-weight: bold;
+      color: var(--text);
+    }
+    .desc {
+      margin-top: 0.3rem;
+      font-size: 0.95rem;
+      color: var(--subtle);
+    }
+    .changed {
+      background-color: #fffbe6;
+      border-left: 4px solid #FFC107;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+    }
+    .note-toggle {
+      margin-top: 0.5rem;
+      font-size: 0.85rem;
+      color: var(--accent);
+      cursor: pointer;
+      background: none;
+      border: none;
+      text-decoration: underline;
+    }
+    .note-area {
+      display: none;
+      margin-top: 0.5rem;
+    }
+    textarea {
+      width: 100%;
+      min-height: 60px;
+      padding: 0.5rem;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      resize: vertical;
+      font-family: monospace;
+    }
+  </style>
+</head>
+<body>
+  <h1>📊 Project Timeline Comparison</h1>
+  <div class="toggle">
+    <button onclick="document.body.classList.toggle('dark')">Toggle Dark Mode</button>
+  </div>
+  <div class="container" id="timelineContainer">
+    <!-- TIMELINES WILL BE INJECTED BELOW -->
+  </div>
+
+  <script>
+    const timelines = {
+      "Old Timeline": [
+        ["01.01.2025", "Phase 1 initiated"],
+        ["19.05.2025", "8091 physical address provided", true],
+        ["20.05.2025", "GoLive Phase 1", true],
+        ["01.07.2025", "Start of moving goods Phase 1"],
+        ["29.08.2025", "End of moving goods Phase 1"],
+        ["15.11.2025", "GoLive Phase 2"],
+        ["12/2025", "End of year inventory"],
+        ["01/2026", "Start of moving goods Phase 2"]
+      ],
+      "New Timeline": [
+        ["01.01.2025", "Phase 1 initiated"],
+        ["09.06.2025", "8091 physical address provided", true],
+        ["11.06.2025", "GoLive Phase 1", true],
+        ["01.07.2025", "Start of moving goods Phase 1"],
+        ["29.08.2025", "End of moving goods Phase 1"],
+        ["15.11.2025", "GoLive Phase 2"],
+        ["12/2025", "End of year inventory"],
+        ["01/2026", "Start of moving goods Phase 2"]
+      ]
+    };
+
+    const container = document.getElementById('timelineContainer');
+
+    Object.entries(timelines).forEach(([title, events]) => {
+      const timeline = document.createElement('div');
+      timeline.className = 'timeline';
+      const heading = document.createElement('h2');
+      heading.textContent = title.includes('Old') ? '📍 ' + title : '🚀 ' + title;
+      timeline.appendChild(heading);
+
+      events.forEach(([date, label, changed], index) => {
+        const event = document.createElement('div');
+        event.className = 'event';
+        if (changed) event.classList.add('changed');
+
+        const dateDiv = document.createElement('div');
+        dateDiv.className = 'date';
+        dateDiv.textContent = date;
+
+        const descDiv = document.createElement('div');
+        descDiv.className = 'desc';
+        descDiv.innerHTML = `${label}<br><em>(Add description here)</em>`;
+
+        const toggleBtn = document.createElement('button');
+        toggleBtn.className = 'note-toggle';
+        toggleBtn.textContent = '[+] Add/View Notes';
+
+        const noteArea = document.createElement('div');
+        noteArea.className = 'note-area';
+
+        const textarea = document.createElement('textarea');
+        const storageKey = `${title}-${index}`;
+        textarea.value = localStorage.getItem(storageKey) || "";
+        textarea.oninput = () => localStorage.setItem(storageKey, textarea.value);
+
+        toggleBtn.onclick = () => {
+          noteArea.style.display = noteArea.style.display === 'none' ? 'block' : 'none';
+        };
+
+        noteArea.appendChild(textarea);
+        event.appendChild(dateDiv);
+        event.appendChild(descDiv);
+        event.appendChild(toggleBtn);
+        event.appendChild(noteArea);
+
+        timeline.appendChild(event);
+      });
+
+      container.appendChild(timeline);
+    });
+  </script>
+</body>
+</html>
