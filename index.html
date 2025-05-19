@@ -189,23 +189,30 @@
         descDiv.className = 'desc';
         descDiv.innerHTML = `<strong>${label}</strong><br><em>${description || "(Add description here)"}</em>`;
 
+        const noteStorageKey = "timelineNotes";
+        let timelineNotes = JSON.parse(localStorage.getItem(noteStorageKey) || "{}");
+        
         const toggleBtn = document.createElement('button');
         toggleBtn.className = 'note-toggle';
         toggleBtn.textContent = '[+] Add/View Notes';
-
+        
         const noteArea = document.createElement('div');
         noteArea.className = 'note-area';
-
+        
         const textarea = document.createElement('textarea');
         const storageKey = `${title}-${index}`;
-        textarea.value = localStorage.getItem(storageKey) || "";
-        textarea.oninput = () => localStorage.setItem(storageKey, textarea.value);
-
+        textarea.value = timelineNotes[storageKey] || "";
+        textarea.oninput = () => {
+          timelineNotes[storageKey] = textarea.value;
+          localStorage.setItem(noteStorageKey, JSON.stringify(timelineNotes));
+        };
+        
         toggleBtn.onclick = () => {
           noteArea.style.display = noteArea.style.display === 'none' ? 'block' : 'none';
         };
-
+        
         noteArea.appendChild(textarea);
+        eventDiv.appendChild(toggleBtn);
         eventDiv.appendChild(dateDiv);
         eventDiv.appendChild(descDiv);
         eventDiv.appendChild(toggleBtn);
