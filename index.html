@@ -174,10 +174,8 @@
         eventDiv.className = 'event';
 
         // Yellow highlight for changed milestones in New Timeline
-        if (
-          title.includes("New") &&
-          (label === "Poskytnutí fyzické adresy 8091" || label === "GoLive Fáze 1")
-        ) {
+        const isNewTimeline = title.toLowerCase().includes("osa");
+        if (isNewTimeline && (index === 1 || index === 2)) {
           eventDiv.classList.add('changed');
         }
 
